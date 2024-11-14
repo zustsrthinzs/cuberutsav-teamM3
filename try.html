@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .quiz-container {
+            text-align: center;
+            width: 300px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h3 id="question">Loading question...</h3>
+    <button onclick="selectAnswer(0)">Option A</button>
+    <button onclick="selectAnswer(1)">Option B</button>
+    <button onclick="selectAnswer(2)">Option C</button>
+    <button onclick="selectAnswer(3)">Option D</button>
+    <p id="feedback"></p>
+    <button id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+    <button id="stopBtn" onclick="endQuiz()" disabled>Stop Quiz</button>
+</div>
+
+<script>
+    // Simple data structure for questions
+    const questions = [
+        { question: "Who won the FIFA World Cup in 2018?", options: ["Brazil", "Argentina", "France", "Germany"], answer: 2 },
+        { question: "Which sport is known as the 'king of sports'?", options: ["Basketball", "Soccer", "Tennis", "Cricket"], answer: 1 },
+        { question: "Who has the most NBA championships?", options: ["Michael Jordan", "Kobe Bryant", "LeBron James", "Bill Russell"], answer: 3 },
+        { question: "How many players on a soccer team?", options: ["9", "10", "11", "12"], answer: 2 },
+        { question: "Which country is famous for cricket?", options: ["France", "Brazil", "India", "Japan"], answer: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // Load the current question and reset the interface
+    function loadQuestion() {
+        const question = questions[currentQuestionIndex];
+        document.getElementById("question").innerText = question.question;
+        const buttons = document.querySelectorAll("button");
+        buttons.forEach((button, index) => {
+            button.innerText = question.options[index];
+            button.disabled = false;
+            button.style.backgroundColor = "";
+        });
+        document.getElementById("feedback").innerText = "";
+        document.getElementById("nextBtn").disabled = true;
+        document.getElementById("stopBtn").disabled = true;
+    }
+
+    // Check the selected answer and update feedback
+    function selectAnswer(selectedOption) {
+        const correctAnswer = questions[currentQuestionIndex].answer;
+        const feedback = document.getElementById("feedback");
+        const buttons = document.querySelectorAll("button");
+
+        if (selectedOption === correctAnswer) {
+            buttons[selectedOption].style.backgroundColor = "green";
+            feedback.innerText = "Correct!";
+            feedback.style.color = "green";
+            score++;
+        } else {
+            buttons[selectedOption].style.backgroundColor = "red";
+            feedback.innerText = `Incorrect! The correct answer is: ${questions[currentQuestionIndex].options[correctAnswer]}`;
+            feedback.style.color = "red";
+        }
+
+        // Disable all buttons after selection
+        buttons.forEach(button => button.disabled = true);
+
+        // Enable Next and Stop buttons
+        document.getElementById("nextBtn").disabled = false;
+        document.getElementById("stopBtn").disabled = false;
+    }
+
+    // Move to the next question or end the quiz if it's the last question
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+
+    // End the quiz and show the score
+    function endQuiz() {
+        document.querySelector(".quiz-container").innerHTML = `
+            <h3>Quiz Completed!</h3>
+            <p>Your score: ${score} out of ${questions.length}</p>
+            <button onclick="restartQuiz()">Try Again</button>
+        `;
+    }
+
+    // Restart the quiz
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        loadQuestion();
+    }
+
+    // Start the quiz by loading the first question
+    loadQuestion();
+</script>
+
+</body>
+</html>
