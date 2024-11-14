@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .quiz-container {
+            text-align: center;
+            width: 300px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h3 id="question">Question will appear here</h3>
+    <button onclick="selectAnswer(this, 0)">Option A</button>
+    <button onclick="selectAnswer(this, 1)">Option B</button>
+    <button onclick="selectAnswer(this, 2)">Option C</button>
+    <button onclick="selectAnswer(this, 3)">Option D</button>
+    <p id="feedback"></p>
+    <button onclick="nextQuestion()" style="margin-top: 10px;">Next</button>
+    <button onclick="endQuiz()" style="margin-top: 10px;">Stop Quiz</button>
+</div>
+
+<script>
+    const questions = [
+        { q: "Who won the FIFA World Cup in 2018?", options: ["Brazil", "Argentina", "France", "Germany"], answer: 2 },
+        { q: "Which sport is known as the 'king of sports'?", options: ["Basketball", "Soccer", "Tennis", "Cricket"], answer: 1 },
+        { q: "Which player has the most NBA championships?", options: ["Michael Jordan", "Kobe Bryant", "LeBron James", "Bill Russell"], answer: 3 },
+        { q: "How many players are on a soccer team?", options: ["9", "10", "11", "12"], answer: 2 },
+        { q: "Which country is known for cricket?", options: ["France", "Brazil", "India", "Japan"], answer: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let correctAnswers = 0;
+
+    function loadQuestion() {
+        if (currentQuestion < questions.length) {
+            const questionData = questions[currentQuestion];
+            document.getElementById("question").innerText = questionData.q;
+            const buttons = document.querySelectorAll(".quiz-container button");
+            buttons[0].innerText = questionData.options[0];
+            buttons[1].innerText = questionData.options[1];
+            buttons[2].innerText = questionData.options[2];
+            buttons[3].innerText = questionData.options[3];
+            document.getElementById("feedback").innerText = "";
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.backgroundColor = ""; // Reset button color
+            });
+        }
+    }
+
+    function selectAnswer(button, option) {
+        const questionData = questions[currentQuestion];
+        const feedback = document.getElementById("feedback");
+        const buttons = document.querySelectorAll(".quiz-container button");
+
+        if (option === questionData.answer) {
+            button.style.backgroundColor = "green";
+            feedback.innerText = "Correct!";
+            feedback.style.color = "green";
+            correctAnswers++;
+        } else {
+            button.style.backgroundColor = "red";
+            feedback.innerText = `Incorrect! Correct answer: ${questionData.options[questionData.answer]}`;
+            feedback.style.color = "red";
+        }
+
+        // Disable all buttons after an answer is selected
+        buttons.forEach(btn => btn.disabled = true);
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+
+    function endQuiz() {
+        document.querySelector(".quiz-container").innerHTML = `
+            <h3>Quiz Completed!</h3>
+            <p>Your score: ${correctAnswers} out of ${questions.length}</p>
+        `;
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
